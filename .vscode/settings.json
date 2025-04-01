@@ -1,4 +1,4 @@
 {
     "appService.defaultWebAppToDeploy": "/subscriptions/7681a7ed-203c-4fc3-837a-3d1d915f125d/resourceGroups/WolfeGroveRG/providers/Microsoft.Web/sites/wolfegrove",
-    "appService.deploySubpath": "."
+   
 }
