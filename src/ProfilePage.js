@@ -24,13 +24,13 @@ const ProfilePage = () => {
         try {
           // Get basic account info from MSAL
           const currentAccount = accounts[0];
-          setUserInfo({
-            ...userInfo,
+          setUserInfo(prevUserInfo => ({
+            ...prevUserInfo,
             displayName: currentAccount.name || 'WolfeGrove Customer',
             email: currentAccount.username || '',
             firstName: currentAccount.given_name || '',
             lastName: currentAccount.family_name || ''
-          });
+          }));
 
           // You could also fetch additional user data from Microsoft Graph API
           // This would require additional scopes and token acquisition
