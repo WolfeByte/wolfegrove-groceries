@@ -10,7 +10,7 @@ const msalConfig = {
   auth: {
     clientId: '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
     authority: 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
-    redirectUri: 'http://localhost:3000',
+    redirectUri: 'wolfegrove.azurewebsites.net',
   },
   cache: {
     cacheLocation: 'sessionStorage',
