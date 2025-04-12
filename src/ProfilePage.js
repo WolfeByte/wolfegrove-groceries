@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
+import DebugTokenComponent from './DebugTokenComponent';
 
 const ProfilePage = () => {
   const { instance, accounts } = useMsal();
@@ -22,34 +23,36 @@ const ProfilePage = () => {
     const fetchUserDetails = async () => {
       if (isAuthenticated && accounts.length > 0) {
         try {
-          // Get basic account info from MSAL
+          // Get account info
           const currentAccount = accounts[0];
+          console.log("Account in profile:", currentAccount);
+          
+          // Check idTokenClaims for user info
+          const idTokenClaims = currentAccount.idTokenClaims || {};
+          console.log("ID Token Claims in profile:", idTokenClaims);
+          
+          // Try different claim names that might contain user info
+          // Entra External ID might use different claim names
           setUserInfo(prevUserInfo => ({
             ...prevUserInfo,
-            displayName: currentAccount.name || 'WolfeGrove Customer',
-            email: currentAccount.username || '',
-            firstName: currentAccount.given_name || '',
-            lastName: currentAccount.family_name || ''
+            displayName: currentAccount.name || 
+                        idTokenClaims.name || 
+                        idTokenClaims.display_name || 
+                        'WolfeGrove Customer',
+            email: currentAccount.username || 
+                  idTokenClaims.emails?.[0] || 
+                  idTokenClaims.email || 
+                  '',
+            firstName: currentAccount.given_name || 
+                      idTokenClaims.given_name || 
+                      idTokenClaims.first_name || 
+                      '',
+            lastName: currentAccount.family_name || 
+                      idTokenClaims.family_name || 
+                      idTokenClaims.last_name || 
+                      ''
           }));
 
-          // You could also fetch additional user data from Microsoft Graph API
-          // This would require additional scopes and token acquisition
-          /*
-          const response = await instance.acquireTokenSilent({
-            scopes: ["User.Read"],
-            account: currentAccount
-          });
-          
-          const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
-            headers: {
-              Authorization: `Bearer ${response.accessToken}`
-            }
-          });
-          
-          const data = await graphResponse.json();
-          console.log(data);
-          */
-          
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -87,9 +90,11 @@ const ProfilePage = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 20px' }}>
       <h1 style={{ color: '#107c10', marginBottom: '1.5rem' }}>Your WolfeGrove account</h1>
+
+      <DebugTokenComponent />
       
       <div style={{ marginBottom: '2rem' }}>
-        <p>WolfeGrove Loyalty Card offers exclusive benefits, early access to new products, and personalized experiences.</p>
+        <p>WolfeGrove Loyalty Card offers ZERO benefits, NO early access to new products, and CRAPPY personalised experiences.</p>
         
         {/* Loyalty Card */}
         <div style={{ 

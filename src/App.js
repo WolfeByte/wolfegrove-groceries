@@ -11,6 +11,7 @@ const msalConfig = {
     clientId: process.env.REACT_APP_CLIENT_ID || '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
     authority: process.env.REACT_APP_AUTHORITY || 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
+    postLogoutRedirectUri: window.location.origin,
   },
   cache: {
     cacheLocation: 'sessionStorage',
@@ -20,6 +21,11 @@ const msalConfig = {
 
 // Initialize MSAL instance
 const msalInstance = new PublicClientApplication(msalConfig);
+
+// Set default login request with correct scopes
+const loginRequest = {
+  scopes: ['openid', 'profile', 'email', 'User.Read']
+};
 
 // Sample product data - using Woodgrove demo images directly
 const products = [
@@ -38,11 +44,19 @@ const LoginButton = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
+  
+
+  // Add this to debug what's coming back in the accounts
+  useEffect(() => {
+    if (accounts && accounts.length > 0) {
+      console.log("MSAL Account:", accounts[0]);
+      // Look specifically at the idTokenClaims
+      console.log("ID Token Claims:", accounts[0].idTokenClaims);
+    }
+  }, [accounts]);
 
   const handleLogin = () => {
-    instance.loginRedirect({
-      scopes: ['User.Read'], // Add required scopes for your application
-    });
+    instance.loginRedirect(loginRequest);
   };
 
   const handleLogout = () => {
