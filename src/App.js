@@ -210,7 +210,7 @@ const HeroSection = () => {
               marginBottom: '1.5rem',
               textAlign: 'center'
             }}>
-              Welcome to WolfeGrove Groceries demo
+              Welcome to WolfeGrove Groceries
             </h1>
           </div>
         </div>
