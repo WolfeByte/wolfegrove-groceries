@@ -1,70 +1,71 @@
-# Getting Started with Create React App
+# WolfeGrove Groceries
+
+A React application for WolfeGrove Groceries with Azure Entra External ID authentication.
+
+## Local Development
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+#### `npm start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### `npm test`
 
-### `npm test`
+Launches the test runner in the interactive watch mode.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### `npm run build`
 
-### `npm run build`
+Builds the app for production to the `build` folder.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Azure Deployment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This project is configured for deployment to Azure Web App via GitHub Actions.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerequisites
 
-### `npm run eject`
+1. An Azure subscription
+2. An Azure Web App named "wolfegrove" created in the Azure portal
+3. A GitHub secret named `AZURE_WEBAPP_PUBLISH_PROFILE` containing the publish profile from your Azure Web App
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Deployment Process
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Push changes to the `master` branch
+2. GitHub Actions workflow will automatically:
+   - Build the React application
+   - Deploy the build to Azure Web App
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Manual Deployment
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+You can also deploy manually using Azure CLI:
 
-## Learn More
+```bash
+# Build the app
+npm run build
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Create the ZIP file (PowerShell)
+Compress-Archive -Path .\build\* -DestinationPath .\build.zip -Force
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Alternative using Windows command prompt
+cd build
+tar -acf ..\build.zip *
+cd ..
 
-### Code Splitting
+# Deploy to Azure
+az webapp deployment source config-zip --resource-group WolfeGroveRG --name wolfegrove --src ./build.zip
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Authentication
 
-### Analyzing the Bundle Size
+This app uses Azure Entra External ID for authentication. The configuration is defined in `src/App.js` and uses the following environment variables:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- REACT_APP_CLIENT_ID
+- REACT_APP_AUTHORITY
+- REACT_APP_REDIRECT_URI
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For local development, these variables will fall back to the hardcoded values if not defined.

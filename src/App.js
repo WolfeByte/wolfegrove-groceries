@@ -8,9 +8,9 @@ import ProfilePage from './ProfilePage';
 // MSAL configuration with WolfeGrove Entra External ID details
 const msalConfig = {
   auth: {
-    clientId: '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
-    authority: 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
-    redirectUri: 'wolfegrove.azurewebsites.net',
+    clientId: process.env.REACT_APP_CLIENT_ID || '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
+    authority: process.env.REACT_APP_AUTHORITY || 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
+    redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
   },
   cache: {
     cacheLocation: 'sessionStorage',
