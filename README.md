@@ -1,6 +1,6 @@
 # WolfeGrove Groceries
 
-A React application for WolfeGrove Groceries demonstrating Azure Entra External ID authentication with user profile management capabilities.
+A React application for demonstrating Entra External ID authentication, user flows, with user profile management capabilities.
 
 ## Screenshots
 
@@ -14,24 +14,21 @@ A React application for WolfeGrove Groceries demonstrating Azure Entra External 
 
 WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 
-- Authentication with Azure Entra External ID
+- Authentication with Entra External ID
 - User profile management
 - Integration with Microsoft Graph API
-- Responsive UI design
 
 ### Key Features
 
-- **User Authentication**: Sign in/out with Azure Entra External ID
+- **User Authentication**: Sign-up, Sign in/out with Entra External ID
 - **User Profile Management**: View and edit profile information
 - **Profile Editing**: Update user details like name, city, country, etc.
 - **Account Management**: Request account deletion (using Microsoft Graph API)
 - **Loyalty Programme**: Display a virtual loyalty card for members
-- **Product Browsing**: View sample grocery products
 
 ### Technologies Used
 
 - React (Create React App)
-- React Router for navigation
 - MSAL (Microsoft Authentication Library) for authentication
 - Microsoft Graph API for user management
 - Azure Static Web Apps for hosting
@@ -42,18 +39,17 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 
 1. Create an app registration in Entra External ID
 2. Configure the following:
-   - Redirect URIs: Add both local and production URLs
+   - Redirect URIs: Add both local and production URLs (https://localhost:3000 or https://yourapp.azurestaticapps.net)
    - API permissions: 
      - Microsoft Graph: User.Read (delegated)
      - Microsoft Graph: User.ReadWrite (delegated)
    - Authentication: Enable access tokens and ID tokens
-   - Expose an API: Configure if needed
 
 ### Required Permissions for Feature Functionality
 
 - **Basic profile viewing**: User.Read
 - **Profile editing**: User.ReadWrite
-- **Account deletion request**: User.ReadWrite
+- **Account deletion request**: User.ReadWriteAll
 
 ## Azure Deployment
 
@@ -164,16 +160,8 @@ jobs:
 
 3. **Setting up GitHub Secrets**
 
-For your application to work correctly, you also need to add the following secrets to your GitHub repository:
-
-1. `REACT_APP_CLIENT_ID`: Your Entra External ID app registration client ID
-2. `REACT_APP_AUTHORITY`: Your Entra External ID authority URL
-3. `REACT_APP_REDIRECT_URI`: Your production redirect URI
-
-To add these secrets:
-- Go to your GitHub repository
-- Click on "Settings" > "Secrets and variables" > "Actions"
-- Click "New repository secret" and add each secret
+When you create an Azure Static Web App and connect it to GitHub, it automatically creates a repository secret with a name like AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE (your specific name may differ). 
+This secret contains the deployment token and is used by the GitHub Actions workflow.
 
 ### Alternative: Manual Deployment to Azure Web App
 
@@ -190,17 +178,13 @@ Compress-Archive -Path .\build\* -DestinationPath .\build.zip -Force
 az webapp deployment source config-zip --resource-group WolfeGroveRG --name wolfegrove --src ./build.zip
 ```
 
-## Local Development
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ### Prerequisites
 
 1. Node.js (v14+)
 2. npm 
 3. PowerShell
 4. Access to an Azure Entra External ID tenant
-5. An app registration in Azure Entra External ID
+5. An app registration in the Entra External ID tenant
 
 ### Environment Setup
 
@@ -261,10 +245,6 @@ Builds the app for production to the `build` folder.
 3. **API Permission Issues**:
    - For admin-level operations, ensure proper admin consent is granted
    - Check browser console for detailed API error messages
-
-### Support
-
-For issues, please open a GitHub issue in the repository.
 
 ## Customising the Application
 
