@@ -2,8 +2,6 @@
 
 A React application for demonstrating Entra External ID authentication, user flows, with user profile management capabilities.
 
-## Screenshots
-
 ### Home Page
 ![WolfeGrove Groceries Homepage](https://github.com/user-attachments/assets/69ea36ef-940f-46c1-9177-4e6108695ce6)
 
