@@ -7,7 +7,7 @@ const UserContext = createContext();
 
 // Create a provider component
 export const UserProvider = ({ children }) => {
-  const { instance, accounts } = useMsal();
+  const { accounts } = useMsal(); // Removed 'instance' as it's not being used
   const isAuthenticated = useIsAuthenticated();
   const [userInfo, setUserInfo] = useState({
     displayName: '',
