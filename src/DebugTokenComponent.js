@@ -6,6 +6,7 @@ const DebugTokenComponent = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const [tokenData, setTokenData] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   
   useEffect(() => {
     const analyzeToken = async () => {
@@ -49,45 +50,87 @@ const DebugTokenComponent = () => {
   
   return (
     <div style={{ 
-      padding: '20px', 
-      backgroundColor: '#f5f5f5', 
+      backgroundColor: '#e2f0d9', 
       borderRadius: '8px',
-      margin: '20px 0'
+      margin: '20px 0',
+      overflow: 'hidden',
+      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+      transition: 'box-shadow 0.2s'
     }}>
-      <h3>Token Debug Information</h3>
+      <div 
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{ 
+          padding: '15px 20px', 
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: isExpanded ? '1px solid #cce4cc' : 'none'
+        }}
+      >
+        <h3 style={{ 
+          margin: 0, 
+          color: 'var(--color-dark)',
+          fontWeight: '600',
+          fontSize: '1.1rem'
+        }}>
+          Token Debug Information
+        </h3>
+        <span style={{
+          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.3s ease',
+          fontSize: '0.8rem'
+        }}>▼</span>
+      </div>
       
-      {tokenData.message && (
-        <div style={{ color: 'blue' }}>{tokenData.message}</div>
-      )}
-      
-      {tokenData.error && (
-        <div style={{ color: 'red' }}>Error: {tokenData.error}</div>
-      )}
-      
-      {tokenData.account && (
-        <div>
-          <h4>Account Info</h4>
-          <pre style={{ backgroundColor: '#eee', padding: '10px', overflow: 'auto' }}>
-            {JSON.stringify({
-              homeAccountId: tokenData.account.homeAccountId,
-              environment: tokenData.account.environment,
-              tenantId: tokenData.account.tenantId,
-              username: tokenData.account.username,
-              localAccountId: tokenData.account.localAccountId,
-              name: tokenData.account.name,
-              idTokenClaims: tokenData.idTokenClaims
-            }, null, 2)}
-          </pre>
+      {isExpanded && (
+        <div style={{ padding: '20px' }}>
+          {tokenData.message && (
+            <div style={{ color: 'blue' }}>{tokenData.message}</div>
+          )}
           
-          <h4>Token Info</h4>
-          <pre style={{ backgroundColor: '#eee', padding: '10px', overflow: 'auto' }}>
-            {JSON.stringify({
-              accessToken: tokenData.accessToken,
-              tokenType: tokenData.tokenType,
-              scopes: tokenData.scopes,
-              expiresOn: tokenData.expiresOn
-            }, null, 2)}
-          </pre>
+          {tokenData.error && (
+            <div style={{ color: 'red' }}>Error: {tokenData.error}</div>
+          )}
+          
+          {tokenData.account && (
+            <div>
+              <h4 style={{ color: 'var(--color-dark)', marginTop: 0 }}>Account Info</h4>
+              <pre style={{ 
+                backgroundColor: '#f5f5f5', 
+                padding: '15px', 
+                overflow: 'auto',
+                borderRadius: '4px',
+                border: '1px solid #ddd'
+              }}>
+                {JSON.stringify({
+                  homeAccountId: tokenData.account.homeAccountId,
+                  environment: tokenData.account.environment,
+                  tenantId: tokenData.account.tenantId,
+                  username: tokenData.account.username,
+                  localAccountId: tokenData.account.localAccountId,
+                  name: tokenData.account.name,
+                  idTokenClaims: tokenData.idTokenClaims
+                }, null, 2)}
+              </pre>
+              
+              <h4 style={{ color: 'var(--color-dark)' }}>Token Info</h4>
+              <pre style={{ 
+                backgroundColor: '#f5f5f5', 
+                padding: '15px', 
+                overflow: 'auto',
+                borderRadius: '4px',
+                border: '1px solid #ddd'
+              }}>
+                {JSON.stringify({
+                  accessToken: tokenData.accessToken,
+                  tokenType: tokenData.tokenType,
+                  scopes: tokenData.scopes,
+                  expiresOn: tokenData.expiresOn
+                }, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       )}
     </div>

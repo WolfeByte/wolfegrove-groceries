@@ -1,5 +1,5 @@
 // App.js with routing support
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
@@ -40,11 +40,13 @@ const products = [
   { id: 8, name: 'Oranges', weight: '1 kg', price: '$4.0', image: 'https://woodgrovedemo.com/images/Products/oranges.png' },
 ];
 
-// Login button component that shows profile link when logged in
+
+// Updated LoginButton component with dropdown menu
 const LoginButton = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogin = () => {
     instance.loginRedirect(loginRequest);
@@ -56,7 +58,26 @@ const LoginButton = () => {
 
   const goToProfile = () => {
     navigate('/profile');
+    setDropdownOpen(false);
   };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(prev => !prev);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownOpen && !event.target.closest('.user-dropdown')) {
+        setDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   if (isAuthenticated && accounts.length > 0) {
     // Extract the correct user information from idTokenClaims
@@ -69,18 +90,93 @@ const LoginButton = () => {
                         `${firstName} ${lastName}`.trim() || idTokenClaims.email || 'User';
     
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <span 
-          onClick={goToProfile}
+      <div 
+        className="user-dropdown"
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '1rem',
+          position: 'relative'
+        }}
+      >
+        <div 
+          onClick={toggleDropdown}
           style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
             color: 'black', 
             cursor: 'pointer',
             fontSize: '0.9rem',
             fontWeight: '500'
           }}
         >
-          Hello, {displayName.split(' ')[0]}
-        </span>
+          <span>Hello, {displayName.split(' ')[0]}</span>
+          <span style={{ 
+            fontSize: '0.6rem', 
+            marginTop: '2px',
+            transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s ease'
+          }}>▼</span>
+        </div>
+        
+        {dropdownOpen && (
+          <div style={{
+            position: 'absolute',
+            top: 'calc(100% + 10px)',
+            right: 0,
+            backgroundColor: 'white',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            borderRadius: '8px',
+            width: '200px',
+            zIndex: 100,
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              borderBottom: '1px solid #eee',
+              padding: '12px 16px',
+              color: '#666',
+              fontSize: '0.8rem'
+            }}>
+              Signed in as <strong>{displayName}</strong>
+            </div>
+            
+            <div 
+              onClick={goToProfile}
+              style={{
+                padding: '12px 16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'background-color 0.2s',
+                ':hover': { backgroundColor: '#f5f5f5' }
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <span style={{ fontSize: '0.9rem' }}>My Account</span>
+            </div>
+            
+            <div 
+              onClick={handleLogout}
+              style={{
+                padding: '12px 16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'background-color 0.2s',
+                borderTop: '1px solid #eee'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <span style={{ fontSize: '0.9rem' }}>Sign out</span>
+            </div>
+          </div>
+        )}
+        
         <button 
           style={{
             backgroundColor: 'var(--color-dark)',
