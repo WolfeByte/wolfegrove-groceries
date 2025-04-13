@@ -1,83 +1,4 @@
-## Customising the Application
-
-If you've cloned this repository and want to rebrand it from "WolfeGrove Groceries" to your own company name, follow these steps:
-
-### 1. Update Application Name References
-
-**In App.js:**
-- Look for the `Header` component (around line 100-150) and change:
-  ```javascript
-  <span style={{ fontWeight: '600', color: '#333', fontSize: '16px' }}>WolfeGrove Groceries</span>
-  ```
-  to your company name
-
-- Update the brand color variables if desired (in the `AppContent` component, around line 270-280):
-  ```javascript
-  document.documentElement.style.setProperty('--color-light', '#267A02');
-  document.documentElement.style.setProperty('--color-very-light', 'rgb(5, 166, 2)');
-  document.documentElement.style.setProperty('--color-dark', '#107c10');
-  document.documentElement.style.setProperty('--color-very-dark', '#164601');
-  ```
-
-**In ProfilePage.js:**
-- Change the main heading:
-  ```javascript
-  <h1 style={{ color: '#107c10', marginBottom: '1.5rem' }}>Your WolfeGrove account</h1>
-  ```
-
-- Update the fallback name in `fetchUserDetails` function:
-  ```javascript
-  idTokenClaims.email || 'WolfeGrove Customer';
-  ```
-
-**In EnhancedLoyaltyCard.js:**
-- Update the loyalty card title:
-  ```javascript
-  WolfeGrove Loyalty Card
-  ```
-
-- Update the card footer:
-  ```javascript
-  Valid at all WolfeGrove locations
-  ```
-
-### 2. Update Authentication Configuration
-
-**In App.js:**
-- Update the MSAL configuration with your Entra External ID details (around line 10-15):
-  ```javascript
-  const msalConfig = {
-    auth: {
-      clientId: process.env.REACT_APP_CLIENT_ID || 'your-client-id',
-      authority: process.env.REACT_APP_AUTHORITY || 'your-authority-url',
-      redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
-      postLogoutRedirectUri: window.location.origin,
-    },
-    cache: {
-      cacheLocation: 'sessionStorage',
-      storeAuthStateInCookie: false,
-    },
-  };
-  ```
-
-### 3. Update Images and Products
-
-**In App.js:**
-- Replace the sample product data (around line 20-30) with your own products
-- Update image URLs to point to your own product images
-
-### 4. Update Text Content
-
-**In App.js:**
-- Update the welcome message in `HeroSection` component
-- Update the statistics in `StatsSection` component
-- Update the product section heading in `ProductsSection` component
-
-**In Footer.js:**
-- Update the copyright information:
-  ```javascript
-  &copy; 2025 WolfeGrove Groceries. All rights reserved.
-  ```# WolfeGrove Groceries
+# WolfeGrove Groceries
 
 A React application for WolfeGrove Groceries demonstrating Azure Entra External ID authentication with user profile management capabilities.
 
@@ -115,60 +36,24 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 - Microsoft Graph API for user management
 - Azure Static Web Apps for hosting
 
-## Local Development
+## Authentication Configuration
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Azure Entra External ID Setup
 
-### Prerequisites
+1. Create an app registration in Entra External ID
+2. Configure the following:
+   - Redirect URIs: Add both local and production URLs
+   - API permissions: 
+     - Microsoft Graph: User.Read (delegated)
+     - Microsoft Graph: User.ReadWrite (delegated)
+   - Authentication: Enable access tokens and ID tokens
+   - Expose an API: Configure if needed
 
-1. Node.js (v14+)
-2. npm 
-3. PowerShell
-4. Access to an Azure Entra External ID tenant
-5. An app registration in Azure Entra External ID
+### Required Permissions for Feature Functionality
 
-### Environment Setup
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-REACT_APP_CLIENT_ID=your-client-id
-REACT_APP_AUTHORITY=your-authority-url
-REACT_APP_REDIRECT_URI=http://localhost:3000
-```
-
-Alternatively, the app will use the default values in `App.js` if these variables are not defined.
-
-### Installation
-
-```powershell
-# Clone the repository
-git clone https://github.com/yourusername/wolfegrove-groceries.git
-cd wolfegrove-groceries
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm start
-```
-
-### Available Scripts
-
-In the project directory, you can run:
-
-#### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-#### `npm test`
-
-Launches the test runner in the interactive watch mode.
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.
+- **Basic profile viewing**: User.Read
+- **Profile editing**: User.ReadWrite
+- **Account deletion request**: User.ReadWrite
 
 ## Azure Deployment
 
@@ -273,7 +158,7 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE_027266400 }}
           action: "close"
 ```
 
@@ -305,24 +190,60 @@ Compress-Archive -Path .\build\* -DestinationPath .\build.zip -Force
 az webapp deployment source config-zip --resource-group WolfeGroveRG --name wolfegrove --src ./build.zip
 ```
 
-## Authentication Configuration
+## Local Development
 
-### Azure Entra External ID Setup
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-1. Create an app registration in Entra External ID
-2. Configure the following:
-   - Redirect URIs: Add both local and production URLs
-   - API permissions: 
-     - Microsoft Graph: User.Read (delegated)
-     - Microsoft Graph: User.ReadWrite (delegated)
-   - Authentication: Enable access tokens and ID tokens
-   - Expose an API: Configure if needed
+### Prerequisites
 
-### Required Permissions for Feature Functionality
+1. Node.js (v14+)
+2. npm 
+3. PowerShell
+4. Access to an Azure Entra External ID tenant
+5. An app registration in Azure Entra External ID
 
-- **Basic profile viewing**: User.Read
-- **Profile editing**: User.ReadWrite
-- **Account deletion request**: User.ReadWrite
+### Environment Setup
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+REACT_APP_CLIENT_ID=your-client-id
+REACT_APP_AUTHORITY=your-authority-url
+REACT_APP_REDIRECT_URI=http://localhost:3000
+```
+
+Alternatively, the app will use the default values in `App.js` if these variables are not defined.
+
+### Installation
+
+```powershell
+# Clone the repository
+git clone https://github.com/yourusername/wolfegrove-groceries.git
+cd wolfegrove-groceries
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
+```
+
+### Available Scripts
+
+In the project directory, you can run:
+
+#### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+#### `npm test`
+
+Launches the test runner in the interactive watch mode.
+
+#### `npm run build`
+
+Builds the app for production to the `build` folder.
 
 ## Troubleshooting
 
@@ -344,3 +265,84 @@ az webapp deployment source config-zip --resource-group WolfeGroveRG --name wolf
 ### Support
 
 For issues, please open a GitHub issue in the repository.
+
+## Customising the Application
+
+If you've cloned this repository and want to rebrand it from "WolfeGrove Groceries" to your own company name, follow these steps:
+
+### 1. Update Application Name References
+
+**In App.js:**
+- Look for the `Header` component (around line 100-150) and change:
+  ```javascript
+  <span style={{ fontWeight: '600', color: '#333', fontSize: '16px' }}>WolfeGrove Groceries</span>
+  ```
+  to your company name
+
+- Update the brand color variables if desired (in the `AppContent` component, around line 270-280):
+  ```javascript
+  document.documentElement.style.setProperty('--color-light', '#267A02');
+  document.documentElement.style.setProperty('--color-very-light', 'rgb(5, 166, 2)');
+  document.documentElement.style.setProperty('--color-dark', '#107c10');
+  document.documentElement.style.setProperty('--color-very-dark', '#164601');
+  ```
+
+**In ProfilePage.js:**
+- Change the main heading:
+  ```javascript
+  <h1 style={{ color: '#107c10', marginBottom: '1.5rem' }}>Your WolfeGrove account</h1>
+  ```
+
+- Update the fallback name in `fetchUserDetails` function:
+  ```javascript
+  idTokenClaims.email || 'WolfeGrove Customer';
+  ```
+
+**In EnhancedLoyaltyCard.js:**
+- Update the loyalty card title:
+  ```javascript
+  WolfeGrove Loyalty Card
+  ```
+
+- Update the card footer:
+  ```javascript
+  Valid at all WolfeGrove locations
+  ```
+
+### 2. Update Authentication Configuration
+
+**In App.js:**
+- Update the MSAL configuration with your Entra External ID details (around line 10-15):
+  ```javascript
+  const msalConfig = {
+    auth: {
+      clientId: process.env.REACT_APP_CLIENT_ID || 'your-client-id',
+      authority: process.env.REACT_APP_AUTHORITY || 'your-authority-url',
+      redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
+      postLogoutRedirectUri: window.location.origin,
+    },
+    cache: {
+      cacheLocation: 'sessionStorage',
+      storeAuthStateInCookie: false,
+    },
+  };
+  ```
+
+### 3. Update Images and Products
+
+**In App.js:**
+- Replace the sample product data (around line 20-30) with your own products
+- Update image URLs to point to your own product images
+
+### 4. Update Text Content
+
+**In App.js:**
+- Update the welcome message in `HeroSection` component
+- Update the statistics in `StatsSection` component
+- Update the product section heading in `ProductsSection` component
+
+**In Footer.js:**
+- Update the copyright information:
+  ```javascript
+  &copy; 2025 WolfeGrove Groceries. All rights reserved.
+  ```
