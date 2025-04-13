@@ -1,4 +1,4 @@
-## Customizing the Application
+## Customising the Application
 
 If you've cloned this repository and want to rebrand it from "WolfeGrove Groceries" to your own company name, follow these steps:
 
@@ -81,6 +81,14 @@ If you've cloned this repository and want to rebrand it from "WolfeGrove Groceri
 
 A React application for WolfeGrove Groceries demonstrating Azure Entra External ID authentication with user profile management capabilities.
 
+## Screenshots
+
+### Home Page
+![WolfeGrove Groceries Homepage](https://github.com/user-attachments/assets/69ea36ef-940f-46c1-9177-4e6108695ce6)
+
+### Profile Page
+![WolfeGrove Groceries Profile Page](https://github.com/user-attachments/assets/b1b27018-70e9-47d8-9ee8-0afe773829e2)
+
 ## Application Overview
 
 WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
@@ -96,7 +104,7 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 - **User Profile Management**: View and edit profile information
 - **Profile Editing**: Update user details like name, city, country, etc.
 - **Account Management**: Request account deletion (using Microsoft Graph API)
-- **Loyalty Program**: Display a virtual loyalty card for members
+- **Loyalty Programme**: Display a virtual loyalty card for members
 - **Product Browsing**: View sample grocery products
 
 ### Technologies Used
@@ -176,7 +184,9 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
 
 #### Setup Steps
 
-1. **Create a Static Web App resource in Azure:**
+1. **Create a Static Web App resource in Azure**
+   
+   Using Azure Portal:
    - Go to the Azure Portal
    - Click "Create a resource"
    - Search for "Static Web App" and select it
@@ -187,20 +197,33 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
      - Name: "wolfegrove-static" (or your preferred name)
      - Region: Select the closest region to your users
      - SKU: Free or Standard based on your needs
-     - Source: GitHub
-     - Organization: Your GitHub organization or username
-     - Repository: Your repository name
-     - Branch: main (or your default branch)
-   - Click "Review + create" and then "Create"
+   
+   Using PowerShell:
+   ```powershell
+   # Login to Azure
+   az login
+   
+   # Create resource group if needed
+   az group create --name YourResourceGroup --location australiaeast
+   
+   # Create static web app (basic workflow)
+   az staticwebapp create --name "wolfegrove-static" --resource-group YourResourceGroup --location "australiaeast" --sku Free
+   ```
 
-2. **Configure build settings:**
-   - During setup, you'll be prompted for build configuration
-   - Set the following values:
-     - App location: `/`
-     - API location: Leave empty (unless you're adding an API)
-     - Output location: `build`
+2. **Connect to GitHub**
 
-3. **The deployment workflow file will be automatically added to your repository**
+   Either during creation or afterwards:
+   - Source: GitHub
+   - Organisation: Your GitHub organisation or username
+   - Repository: Your repository name
+   - Branch: main (or your default branch)
+   
+   This will create a GitHub Actions workflow file in your repository and add a deployment token secret automatically.
+
+3. **Configure build settings**
+   - App location: `/`
+   - API location: Leave empty (unless you're adding an API)
+   - Output location: `build`
 
 #### GitHub Actions Workflow
 
@@ -254,9 +277,7 @@ jobs:
           action: "close"
 ```
 
-#### Setting up GitHub Secrets
-
-When you create an Azure Static Web App and connect it to GitHub, it automatically creates a repository secret with a name like `AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE_027266400` (your specific name may differ). This secret contains the deployment token and is used by the GitHub Actions workflow.
+3. **Setting up GitHub Secrets**
 
 For your application to work correctly, you also need to add the following secrets to your GitHub repository:
 
