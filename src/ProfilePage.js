@@ -2,12 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from './UserContext';
 import DebugTokenComponent from './DebugTokenComponent';
+import EnhancedLoyaltyCard from './EnhancedLoyaltyCard';
 
 const ProfilePage = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
+  const userContext = useUser(); // Use the user context if available
+  
   const [userInfo, setUserInfo] = useState({
     displayName: '',
     email: '',
@@ -23,36 +27,43 @@ const ProfilePage = () => {
     const fetchUserDetails = async () => {
       if (isAuthenticated && accounts.length > 0) {
         try {
-          // Get account info
+          // Get basic account info from MSAL
           const currentAccount = accounts[0];
-          console.log("Account in profile:", currentAccount);
-          
-          // Check idTokenClaims for user info
           const idTokenClaims = currentAccount.idTokenClaims || {};
-          console.log("ID Token Claims in profile:", idTokenClaims);
           
-          // Try different claim names that might contain user info
-          // Entra External ID might use different claim names
+          // Create a proper display name from the claims
+          const firstName = idTokenClaims.given_name || '';
+          const lastName = idTokenClaims.family_name || '';
+          const fullName = (firstName || lastName) ? 
+                          `${firstName} ${lastName}`.trim() : 
+                          idTokenClaims.email || 'WolfeGrove Customer';
+          
           setUserInfo(prevUserInfo => ({
             ...prevUserInfo,
-            displayName: currentAccount.name || 
-                        idTokenClaims.name || 
-                        idTokenClaims.display_name || 
-                        'WolfeGrove Customer',
-            email: currentAccount.username || 
-                  idTokenClaims.emails?.[0] || 
-                  idTokenClaims.email || 
-                  '',
-            firstName: currentAccount.given_name || 
-                      idTokenClaims.given_name || 
-                      idTokenClaims.first_name || 
-                      '',
-            lastName: currentAccount.family_name || 
-                      idTokenClaims.family_name || 
-                      idTokenClaims.last_name || 
-                      ''
+            displayName: fullName,
+            email: idTokenClaims.email || currentAccount.username || '',
+            firstName: firstName,
+            lastName: lastName
           }));
-
+          
+          // You could also fetch additional user data from Microsoft Graph API
+          // This would require additional scopes and token acquisition
+          /*
+          const response = await instance.acquireTokenSilent({
+            scopes: ["User.Read"],
+            account: currentAccount
+          });
+          
+          const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
+            headers: {
+              Authorization: `Bearer ${response.accessToken}`
+            }
+          });
+          
+          const data = await graphResponse.json();
+          console.log(data);
+          */
+          
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -65,6 +76,9 @@ const ProfilePage = () => {
 
     fetchUserDetails();
   }, [isAuthenticated, accounts, instance, navigate]);
+
+  // Use data from userContext if available, otherwise use local state
+  const displayData = userContext && !userContext.isLoading ? userContext : userInfo;
 
   const handleSaveProfile = () => {
     // Here you would typically send the updated profile to your backend
@@ -90,59 +104,22 @@ const ProfilePage = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 20px' }}>
       <h1 style={{ color: '#107c10', marginBottom: '1.5rem' }}>Your WolfeGrove account</h1>
-
+      
+      {/* Add the DebugTokenComponent for debugging */}
       <DebugTokenComponent />
       
       <div style={{ marginBottom: '2rem' }}>
-        <p>WolfeGrove Loyalty Card offers ZERO benefits, NO early access to new products, and CRAPPY personalised experiences.</p>
+        <p>WolfeGrove Loyalty Card offers exclusive benefits, early access to new products, and personalised experiences.</p>
         
-        {/* Loyalty Card */}
-        <div style={{ 
-          backgroundColor: '#107c10', 
-          color: 'white', 
-          padding: '1.5rem', 
-          borderRadius: '8px',
-          marginTop: '1rem',
-          maxWidth: '300px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
-            <div style={{ position: 'relative', width: '24px', height: '24px' }}>
-              <div style={{
-                width: '16px',
-                height: '16px',
-                backgroundColor: '#ffb900',
-                transform: 'rotate(45deg)',
-                position: 'absolute',
-                top: '4px',
-                left: '0'
-              }}></div>
-              <div style={{
-                width: '16px',
-                height: '16px',
-                backgroundColor: '#107c10',
-                transform: 'rotate(45deg)',
-                position: 'absolute',
-                top: '4px',
-                left: '8px',
-                opacity: '0.9'
-              }}></div>
-            </div>
-            <span style={{ fontWeight: '600' }}>WolfeGrove Loyalty Card</span>
-          </div>
-          
-          <div style={{ marginBottom: '0.5rem' }}>
-            <strong>Name:</strong> {userInfo.displayName}
-          </div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <strong>ID:</strong> {Math.floor(100000 + Math.random() * 900000)}
-          </div>
-          <div style={{ marginBottom: '0.5rem' }}>
-            <strong>Tier:</strong> Premium
-          </div>
-          <div>
-            <strong>Since:</strong> {formatDate()}
-          </div>
-        </div>
+        {/* Enhanced Loyalty Card */}
+        <EnhancedLoyaltyCard 
+          userInfo={{
+            displayName: displayData.displayName,
+            id: Math.floor(100000 + Math.random() * 900000).toString(),
+            tier: 'Premium',
+            since: formatDate()
+          }}
+        />
       </div>
       
       {/* Edit Profile Section */}
@@ -222,22 +199,6 @@ const ProfilePage = () => {
           </button>
           
           <button 
-            style={{
-              backgroundColor: '#107c10',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
-          >
-            <span>⟳</span> Delete your account
-          </button>
-          
-          <button 
             onClick={handleDeleteAccount}
             style={{
               backgroundColor: '#107c10',
@@ -268,7 +229,7 @@ const ProfilePage = () => {
           <div>Email</div>
           <input 
             type="email" 
-            value={userInfo.email}
+            value={displayData.email}
             readOnly
             style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ddd', backgroundColor: '#f0f0f0' }}
           />

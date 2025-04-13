@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import ProfilePage from './ProfilePage';
+import { UserProvider } from './UserContext';
 
 // MSAL configuration with WolfeGrove Entra External ID details
 const msalConfig = {
@@ -11,7 +12,7 @@ const msalConfig = {
     clientId: process.env.REACT_APP_CLIENT_ID || '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
     authority: process.env.REACT_APP_AUTHORITY || 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
-    postLogoutRedirectUri: window.location.origin,
+    postLogoutRedirectUri: window.location.origin, // Add this line
   },
   cache: {
     cacheLocation: 'sessionStorage',
@@ -22,7 +23,7 @@ const msalConfig = {
 // Initialize MSAL instance
 const msalInstance = new PublicClientApplication(msalConfig);
 
-// Set default login request with correct scopes
+// Define login request with scopes
 const loginRequest = {
   scopes: ['openid', 'profile', 'email', 'User.Read']
 };
@@ -44,16 +45,6 @@ const LoginButton = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
-  
-
-  // Add this to debug what's coming back in the accounts
-  useEffect(() => {
-    if (accounts && accounts.length > 0) {
-      console.log("MSAL Account:", accounts[0]);
-      // Look specifically at the idTokenClaims
-      console.log("ID Token Claims:", accounts[0].idTokenClaims);
-    }
-  }, [accounts]);
 
   const handleLogin = () => {
     instance.loginRedirect(loginRequest);
@@ -68,6 +59,15 @@ const LoginButton = () => {
   };
 
   if (isAuthenticated && accounts.length > 0) {
+    // Extract the correct user information from idTokenClaims
+    const idTokenClaims = accounts[0].idTokenClaims || {};
+    const firstName = idTokenClaims.given_name || '';
+    const lastName = idTokenClaims.family_name || '';
+    // Create a proper display name if the name claim is "unknown"
+    const displayName = (accounts[0].name !== "unknown" && accounts[0].name) ? 
+                        accounts[0].name : 
+                        `${firstName} ${lastName}`.trim() || idTokenClaims.email || 'User';
+    
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <span 
@@ -79,7 +79,7 @@ const LoginButton = () => {
             fontWeight: '500'
           }}
         >
-          Hello, {accounts[0].name?.split(' ')[0] || 'User'}
+          Hello, {displayName.split(' ')[0]}
         </span>
         <button 
           style={{
@@ -453,7 +453,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <MsalProvider instance={msalInstance}>
-      <AppContent />
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
     </MsalProvider>
   );
 };
