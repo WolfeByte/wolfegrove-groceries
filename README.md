@@ -31,6 +31,37 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 - Microsoft Graph API for user management
 - Azure Static Web Apps for hosting
 
+## Installation
+
+```powershell
+# Clone the repository
+git clone https://github.com/yourusername/wolfegrove-groceries.git
+cd wolfegrove-groceries
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
+```
+
+### Available Scripts
+
+In the project directory, you can run:
+
+#### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+#### `npm test`
+
+Launches the test runner in the interactive watch mode.
+
+#### `npm run build`
+
+Builds the app for production to the `build` folder.
+
 ## Authentication Configuration
 
 ### Azure Entra External ID Setup
@@ -157,7 +188,7 @@ jobs:
           action: "close"
 ```
 
-3. **Setting up GitHub Secrets**
+4. **Setting up GitHub Secrets**
 
 When you create an Azure Static Web App and connect it to GitHub, it automatically creates a repository secret with a name like AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE (your specific name may differ). 
 This secret contains the deployment token and is used by the GitHub Actions workflow.
@@ -194,37 +225,6 @@ REACT_APP_REDIRECT_URI=http://localhost:3000
 ```
 
 Alternatively, the app will use the default values in `App.js` if these variables are not defined.
-
-### Installation
-
-```powershell
-# Clone the repository
-git clone https://github.com/yourusername/wolfegrove-groceries.git
-cd wolfegrove-groceries
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm start
-```
-
-### Available Scripts
-
-In the project directory, you can run:
-
-#### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-#### `npm test`
-
-Launches the test runner in the interactive watch mode.
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.
 
 ## Troubleshooting
 
