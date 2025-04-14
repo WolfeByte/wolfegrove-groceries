@@ -12,14 +12,14 @@ const ProfilePage = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
-  const userContext = useUser(); // Use the user context if available
+  const userContext = useUser();
   
   const [userInfo, setUserInfo] = useState({
     displayName: '',
     email: '',
     firstName: '',
     lastName: '',
-    country: 'US',
+    country: '',
     city: '',
     postalCode: ''
   });

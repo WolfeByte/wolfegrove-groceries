@@ -6,13 +6,13 @@ import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import ProfilePage from './ProfilePage';
 import { UserProvider } from './UserContext';
 
-// MSAL configuration with WolfeGrove Entra External ID details
+// MSAL configuration with the Entra External ID details
 const msalConfig = {
   auth: {
     clientId: process.env.REACT_APP_CLIENT_ID || '20415ce1-ff99-4cf8-aed5-fcd68d564c68',
     authority: process.env.REACT_APP_AUTHORITY || 'https://thewolfecustomers.ciamlogin.com/59412b59-edbf-45a5-a879-2e18220a9d7f',
     redirectUri: process.env.REACT_APP_REDIRECT_URI || window.location.origin,
-    postLogoutRedirectUri: window.location.origin, // Add this line
+    postLogoutRedirectUri: window.location.origin,
   },
   cache: {
     cacheLocation: 'sessionStorage',
@@ -20,7 +20,7 @@ const msalConfig = {
   },
 };
 
-// Initialize MSAL instance
+// Initialise MSAL instance
 const msalInstance = new PublicClientApplication(msalConfig);
 
 // Define login request with scopes
@@ -41,7 +41,7 @@ const products = [
 ];
 
 
-// Updated LoginButton component with dropdown menu
+// LoginButton component with dropdown menu
 const LoginButton = () => {
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();

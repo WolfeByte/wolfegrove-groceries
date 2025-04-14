@@ -37,9 +37,10 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 
 1. Create an app registration in Entra External ID
 2. Configure the following:
-   - Redirect URIs: Add both local and production URLs (https://localhost:3000 or https://yourapp.azurestaticapps.net)
-   - API permissions: 
-     - Microsoft Graph: User.Read (delegated)
+   - Redirect URIs: Add both local and production URLs:
+     - `https://localhost:3000`
+     - `https://yourapp.azurestaticapps.net`
+   - API permissions:
      - Microsoft Graph: User.ReadWrite (delegated)
    - Authentication: Enable access tokens and ID tokens
 
@@ -152,7 +153,7 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE_027266400 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE }}
           action: "close"
 ```
 
@@ -161,20 +162,18 @@ jobs:
 When you create an Azure Static Web App and connect it to GitHub, it automatically creates a repository secret with a name like AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE (your specific name may differ). 
 This secret contains the deployment token and is used by the GitHub Actions workflow.
 
-### Alternative: Manual Deployment to Azure Web App
+### Alternative: Manual Deployment to Azure Static Web App
 
-You can also deploy manually to an Azure Web App:
+You can also deploy manually to an Azure Static Web App:
 
 ```powershell
 # Build the app
 npm run build
 
-# Create the ZIP file
-Compress-Archive -Path .\build\* -DestinationPath .\build.zip -Force
-
 # Deploy to Azure
-az webapp deployment source config-zip --resource-group WolfeGroveRG --name wolfegrove --src ./build.zip
+az staticwebapp deploy --source-location .\build --app-location .\build --api-location "" --name "wolfegrove-static" --resource-group YourResourceGroup
 ```
+The deployment command directly uses your build folder - no need to create a ZIP file. The --source-location points to your built files, while --app-location and --output-location match the configurations used in GitHub Actions.
 
 ### Prerequisites
 
