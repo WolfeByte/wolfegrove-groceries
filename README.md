@@ -1,6 +1,6 @@
 # WolfeGrove Groceries
 
-A React application for demonstrating Entra External ID authentication, user flows, with user profile management capabilities.
+A React application that you can deploy as an Azure Static Web App for quickly demonstrating Entra External ID authentication, user flows, with user profile management capabilities.
 
 ### Home Page
 ![WolfeGrove Groceries Homepage](https://github.com/user-attachments/assets/69ea36ef-940f-46c1-9177-4e6108695ce6)
@@ -103,7 +103,6 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
    - Search for "Static Web App" and select it
    - Click "Create"
    - Fill in the required details:
-     - Subscription: Your Azure subscription
      - Resource Group: Create new or select existing
      - Name: "wolfegrove-static" (or your preferred name)
      - Region: Select the closest region to your users
@@ -136,63 +135,6 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
    - API location: Leave empty (unless you're adding an API)
    - Output location: `build`
 
-#### GitHub Actions Workflow
-
-The deployment process is handled by GitHub Actions. The workflow file should look similar to this:
-
-```yaml
-name: Azure Static Web Apps CI/CD
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
-
-jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE_027266400 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          app_location: "/" 
-          api_location: ""
-          output_location: "build"
-        env:
-          REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
-          REACT_APP_AUTHORITY: ${{ secrets.REACT_APP_AUTHORITY }}
-          REACT_APP_REDIRECT_URI: ${{ secrets.REACT_APP_REDIRECT_URI }}
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE }}
-          action: "close"
-```
-
-4. **Setting up GitHub Secrets**
-
-When you create an Azure Static Web App and connect it to GitHub, it automatically creates a repository secret with a name like AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_STONE (your specific name may differ). 
-This secret contains the deployment token and is used by the GitHub Actions workflow.
-
 ### Alternative: Manual Deployment to Azure Static Web App
 
 You can also deploy manually to an Azure Static Web App:
@@ -219,29 +161,11 @@ The deployment command directly uses your build folder - no need to create a ZIP
 Create a `.env` file in the root directory with the following variables:
 
 ```
-REACT_APP_CLIENT_ID=your-client-id
-REACT_APP_AUTHORITY=your-authority-url
-REACT_APP_REDIRECT_URI=http://localhost:3000
+REACT_APP_CLIENT_ID=your-client-id (The "Application (client) ID" of the App Registration in Entra)
+REACT_APP_AUTHORITY=your-tenant-url (e.g. https://domain.ciamlogin.com/a317c4e7-52ab-4f8e-91fc-7b9389f8c1d2)
+REACT_APP_REDIRECT_URI=https://yourapp.staticwebapps.net
 ```
-
 Alternatively, the app will use the default values in `App.js` if these variables are not defined.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Authentication Errors**:
-   - Verify your app registration settings in Entra External ID
-   - Check that redirect URIs match exactly (including trailing slashes)
-   - Ensure you've granted consent to required permissions
-
-2. **Build Failures**:
-   - Check for ESLint errors before deployment
-   - Verify all dependencies are correctly installed
-
-3. **API Permission Issues**:
-   - For admin-level operations, ensure proper admin consent is granted
-   - Check browser console for detailed API error messages
 
 ## Customising the Application
 
@@ -323,3 +247,19 @@ If you've cloned this repository and want to rebrand it from "WolfeGrove Groceri
   ```javascript
   &copy; 2025 WolfeGrove Groceries. All rights reserved.
   ```
+  ## Troubleshooting
+
+### Common Issues
+
+1. **Authentication Errors**:
+   - Verify your app registration settings in Entra External ID
+   - Check that redirect URIs match exactly (including trailing slashes)
+   - Ensure you've granted consent to required permissions
+
+2. **Build Failures**:
+   - Check for ESLint errors before deployment
+   - Verify all dependencies are correctly installed
+
+3. **API Permission Issues**:
+   - For admin-level operations, ensure proper admin consent is granted
+   - Check browser console for detailed API error messages
