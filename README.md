@@ -12,6 +12,7 @@ A React application that you can deploy as an Azure Static Web App for quickly d
 
 WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 
+- React based application
 - Authentication with Entra External ID
 - User profile management
 - Integration with Microsoft Graph API
@@ -26,7 +27,6 @@ WolfeGrove Groceries is a demo grocery e-commerce platform that showcases:
 
 ### Technologies Used
 
-- React (Create React App)
 - MSAL (Microsoft Authentication Library) for authentication
 - Microsoft Graph API for user management
 - Azure Static Web Apps for hosting
@@ -44,9 +44,6 @@ npm install
 # Start the development server
 npm start
 ```
-
-### Available Scripts
-
 In the project directory, you can run:
 
 #### `npm start`
@@ -54,17 +51,29 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-#### `npm test`
-
-Launches the test runner in the interactive watch mode.
-
 #### `npm run build`
 
 Builds the app for production to the `build` folder.
 
 ## Authentication Configuration
 
-### Azure Entra External ID Setup
+### Prerequisites
+
+1. Access to an Entra External ID tenant
+2. An app registration in the Entra External ID tenant
+
+### Environment Setup
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+REACT_APP_CLIENT_ID=your-client-id (The "Application (client) ID" of the App Registration in Entra)
+REACT_APP_AUTHORITY=your-tenant-url (e.g. https://domain.ciamlogin.com/a317c4e7-52ab-4f8e-91fc-7b9389f8c1d2)
+REACT_APP_REDIRECT_URI=https://yourapp.staticwebapps.net
+```
+Alternatively, the app will use the default values in `App.js` if these variables are not defined.
+
+### Setting up the App in the Entra External ID tenant
 
 1. Create an app registration in Entra External ID
 2. Configure the following:
@@ -107,18 +116,6 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
      - Name: "wolfegrove-static" (or your preferred name)
      - Region: Select the closest region to your users
      - SKU: Free or Standard based on your needs
-   
-   Using PowerShell:
-   ```powershell
-   # Login to Azure
-   az login
-   
-   # Create resource group if needed
-   az group create --name YourResourceGroup --location australiaeast
-   
-   # Create static web app (basic workflow)
-   az staticwebapp create --name "wolfegrove-static" --resource-group YourResourceGroup --location "australiaeast" --sku Free
-   ```
 
 2. **Connect to GitHub**
 
@@ -137,35 +134,24 @@ Azure Static Web Apps provides an easy way to deploy and host React applications
 
 ### Alternative: Manual Deployment to Azure Static Web App
 
-You can also deploy manually to an Azure Static Web App:
+You can also create and deploy the app manually to an Azure Static Web App:
 
 ```powershell
+# Login to Azure
+az login
+   
+# Create resource group if needed
+az group create --name YourResourceGroup --location australiaeast
+   
+# Create static web app (basic workflow)
+az staticwebapp create --name "wolfegrove-static" --resource-group YourResourceGroup --location "australiaeast" --sku Fre
+
 # Build the app
 npm run build
 
 # Deploy to Azure
 az staticwebapp deploy --source-location .\build --app-location .\build --api-location "" --name "wolfegrove-static" --resource-group YourResourceGroup
 ```
-The deployment command directly uses your build folder - no need to create a ZIP file. The --source-location points to your built files, while --app-location and --output-location match the configurations used in GitHub Actions.
-
-### Prerequisites
-
-1. Node.js (v14+)
-2. npm 
-3. PowerShell
-4. Access to an Azure Entra External ID tenant
-5. An app registration in the Entra External ID tenant
-
-### Environment Setup
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-REACT_APP_CLIENT_ID=your-client-id (The "Application (client) ID" of the App Registration in Entra)
-REACT_APP_AUTHORITY=your-tenant-url (e.g. https://domain.ciamlogin.com/a317c4e7-52ab-4f8e-91fc-7b9389f8c1d2)
-REACT_APP_REDIRECT_URI=https://yourapp.staticwebapps.net
-```
-Alternatively, the app will use the default values in `App.js` if these variables are not defined.
 
 ## Customising the Application
 
